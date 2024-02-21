@@ -1,36 +1,45 @@
 import { getSessionAccessToken, getSessionId } from "kv_oauth/mod.ts";
-import { oauth2Client } from "../utils/kv_oauth.ts";
+import { githubOauth2Client, googleOauth2Client } from "../utils/kv_oauth.ts";
 
 export default async function HomePage(req: Request) {
   const sessionId = await getSessionId(req);
   const isSignedIn = sessionId !== undefined;
-  const accessToken = isSignedIn
-    ? await getSessionAccessToken(oauth2Client, sessionId)
+  const githubAccessToken = isSignedIn
+    ? await getSessionAccessToken(githubOauth2Client, sessionId)
     : null;
+  const googleAccessToken = isSignedIn
+    ? await getSessionAccessToken(googleOauth2Client, sessionId)
+    : null;
+
+  const accessToken = githubAccessToken || googleAccessToken;
 
   return (
     <>
-      <p>Provider: GitHub</p>
-      <p>Signed in: {isSignedIn || "undefined"}</p>
+      <p>Provider: GitHub / Google</p>
+      <p>Signed in: {accessToken ? "true" : "false"}</p>
       <p>
         Your access token: {accessToken !== null
           ? (
-            <span style="filter:blur(3px)">
-              ${accessToken + " (intentionally blurred for security)"}
+            <span>
+              <span style="filter:blur(3px)">
+                ${accessToken}
+              </span>
+              <span>(intentionally blurred for security)</span>
             </span>
           )
           : null}
       </p>
       <p>
-        <a href="/oauth/signin">Sign in</a>
+        <a href="/oauth/github/signin">GtiHub Sign in</a>
       </p>
       <p>
-        <a href="/oauth/signout">Sign out</a>
+        <a href="/oauth/github/signout">GitHub Sign out</a>
       </p>
       <p>
-        <a href="https://github.com/denoland/fresh-deno-kv-oauth-demo">
-          Source code
-        </a>
+        <a href="/oauth/google/signin">Google Sign in</a>
+      </p>
+      <p>
+        <a href="/oauth/google/signout">Google Sign out</a>
       </p>
     </>
   );

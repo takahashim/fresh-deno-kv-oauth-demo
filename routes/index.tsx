@@ -41,6 +41,11 @@ export default async function HomePage(req: Request) {
       <p>
         <a href="/oauth/google/signout">Google Sign out</a>
       </p>
+      <p>
+        <a href="https://github.com/takahashim/fresh-deno-kv-oauth-demo/tree/google-oauth2">
+          Source code
+        </a>
+      </p>
     </>
   );
 }
